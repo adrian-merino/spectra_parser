@@ -1,0 +1,7 @@
+# spectra files
+*.0
+*.rar
+*.zip
+
+# env
+spectra_lib/
