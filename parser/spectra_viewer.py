@@ -17,10 +17,10 @@ def parse_spectra():
         if not data or "input" not in data:
             return "Error: No input received"
 
-        print(data["input"])
-        print(type(data["input"]))
-        user_input = str(read_file(data["input"]))
-        print(user_input)
+        spectra_list = read_file(data["input"])["AB"]
+        print(spectra_list)
+        user_input = spectra_list
+
         return jsonify({
             "output": user_input,
             "input_received": user_input
