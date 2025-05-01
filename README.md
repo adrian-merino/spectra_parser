@@ -9,3 +9,7 @@ opens and analyze spectra files
 
 ## Dependencies
 1. `brukeropusreader`
+
+## Running the API
+1. Activate pyenv
+1. `python < python file >`
