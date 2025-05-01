@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectra Analyzer</title>
+</head>
+<body>
+    <p>Please enter file</p>
+
+    <label for="file_path">File Path:</label>
+    <input type="text" id="file_path" name="file_path">
+    <button type="sumbit" onclick="parse_file();">Click here to analyze spectra on path</button>
+    
+    <h3>Output</h3>
+    <div id="output"></div>
+
+    <script>
+        async function parse_file() {
+            const input = document.getElementById("file_path").value;
+            const outputDiv = document.getElementById("output");
+
+            outputDiv.textContent = "Parsing Data..."
+
+            try {
+                const response = await fetch(
+                    "http://127.0.0.1:500/parse_spectra",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({input:input})
+                    }
+                );
+
+                const data = await response.json();
+                outputDiv.textContent = data.output;
+            }
+            catch (error) {
+                outputDiv.textContent = "Error: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
