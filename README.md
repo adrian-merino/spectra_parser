@@ -13,3 +13,4 @@ opens and analyze spectra files
 ## Running the API
 1. Activate pyenv
 1. `python < python file >`
+1. Add spectra file `.0` extionsion, to the root folder
