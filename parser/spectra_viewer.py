@@ -14,16 +14,19 @@ def add_cors_headers(response):
 def parse_spectra():
     try:
         data = request.get_json()
+
         if not data or "input" not in data:
             return "Error: No input received"
 
-        spectra_list = read_file(data["input"])["AB"]
-        print(spectra_list)
-        user_input = spectra_list
+        spectra_list = read_file(data["input"])
 
+        wavenum = [float(x) for x in list(spectra_list.get_range("AB"))]
+        abs = [float(x) for x in list(spectra_list["AB"][0:len(wavenum)])]
+        
         return jsonify({
-            "output": user_input,
-            "input_received": user_input
+            "absorbances": str(abs),
+            "wavenumbers": str(wavenum),
+            "input_received": data["input"]
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
