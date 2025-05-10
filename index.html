@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectra Analyzer</title>
+</head>
+<body>
+    <p>Please enter file</p>
+
+    <label for="file_path">File Path:</label>
+    <input type="text" id="file_path" name="file_path">
+    <button type="sumbit" onclick="parse_file();">Click here to analyze spectra on path</button>
+    
+    <h3>Chart</h3>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+    
+    <h3>Output</h3>
+    <div id="output"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!--From https://cdnjs.com/libraries/hammer.js for the zoom plugin--> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--From https://cdnjs.com/libraries/chartjs-plugin-zoom--> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js" integrity="sha512-FRGbE3pigbYamZnw4+uT4t63+QJOfg4MXSgzPn2t8AWg9ofmFvZ/0Z37ZpCawjfXLBSVX2p2CncsmUH2hzsgJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        
+
+        async function parse_file() {
+            const input = document.getElementById("file_path").value;
+            const outputDiv = document.getElementById("output");
+
+            outputDiv.textContent = "Parsing Data..."
+
+            try {
+                const response = await fetch(
+                    "http://10.245.206.151:500/parse_spectra",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({input:input})
+                    }
+                );
+
+                const data = await response.json();
+                const wavenum = JSON.parse(data.wavenumbers);
+                const abs = JSON.parse(data.absorbances);
+                
+                //outputDiv.textContent = JSON.parse(data.absorbances).length;
+                const spectraArray = wavenum.map((x, i) => ({x, y: abs[i]}))
+                //console.log(spectraArray);
+
+                outputDiv.textContent = spectraArray;
+
+                // test on the graphs
+                const ctx = document.getElementById("myChart");
+
+                if (Chart.getChart("myChart")) {
+                    Chart.getChart("myChart").destroy()
+                }
+
+                var helloChart = new Chart(ctx, {
+                    type: "scatter",
+                    data: {
+                        datasets: [{
+                            label: "NIR spectra",
+                            // data: [{
+                            //     x: 1,
+                            //     y: 1,
+                            // }, {
+                            //     x: 2,
+                            //     y: 2
+                            // }, {    
+                            //     x: 0,
+                            //     y: 0
+                            // }], 
+                            data: spectraArray,
+                        backgroundColor: "rgb(255, 99, 132)"
+                    }]},
+                    options: {
+                        scales: {
+                            x: {
+                                type: "linear",
+                                position: "bottom"
+                            }
+                        },
+                        plugins: {
+                            zoom: {
+                                zoom: {
+                                    wheel: {
+                                        enabled: true,
+                                    },
+                                    mode: "xy",
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            catch (error) {
+                outputDiv.textContent = "Error: " + error.message;
+            }
+        }
+   
+    </script>
+</body>
+</html>
