@@ -21,6 +21,13 @@
     <div id="output"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!--From https://cdnjs.com/libraries/hammer.js for the zoom plugin--> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--From https://cdnjs.com/libraries/chartjs-plugin-zoom--> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js" integrity="sha512-FRGbE3pigbYamZnw4+uT4t63+QJOfg4MXSgzPn2t8AWg9ofmFvZ/0Z37ZpCawjfXLBSVX2p2CncsmUH2hzsgJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
         
 
@@ -59,7 +66,7 @@
                     Chart.getChart("myChart").destroy()
                 }
 
-                new Chart(ctx, {
+                var helloChart = new Chart(ctx, {
                     type: "scatter",
                     data: {
                         datasets: [{
@@ -76,16 +83,26 @@
                             // }], 
                             data: spectraArray,
                         backgroundColor: "rgb(255, 99, 132)"
-                    }],
+                    }]},
                     options: {
                         scales: {
                             x: {
                                 type: "linear",
                                 position: "bottom"
                             }
+                        },
+                        plugins: {
+                            zoom: {
+                                zoom: {
+                                    wheel: {
+                                        enabled: true,
+                                    },
+                                    mode: "xy",
+                                }
+                            }
                         }
                     }
-                }});
+                });
             }
             catch (error) {
                 outputDiv.textContent = "Error: " + error.message;
