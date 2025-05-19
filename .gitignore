@@ -2,6 +2,7 @@
 *.0
 *.rar
 *.zip
+*.csv
 
 # env
 spectra_lib/
